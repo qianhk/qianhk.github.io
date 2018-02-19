@@ -51,6 +51,42 @@
     <header class="title">
       
         <h1>
+          <a href="/2018/02/客户端码农学习ML-工具框架Tensorflow/">客户端码农学习ML —— 工具框架Tensorflow</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-02-21T03:06:50.000Z" itemprop="datePublished">
+    2018-02-21
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/AI-Tensorflow/">AI, Tensorflow</a> }
+  </li>
+
+
+  </ul>
+  
+  
+</div>
+
+    </header>
+    <div>
+      
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
           <a href="/2018/02/客户端码农学习ML-整体了解/">客户端码农学习ML —— 整体了解</a>
         </h1>
       
@@ -77,48 +113,12 @@
       
         <p>ML(Machine Learning 机器学习)</p>
 <h2 id="简介："><a href="#简介：" class="headerlink" title="简介："></a>简介：</h2><p>AlphaGo人机大战吸引了众多人的关注，也引来的一波AI热,不光很多公司进行了大量投入，连政府也相当重视，作为客户端码农自然要与时俱进下，经过一段时间学习与试验，稍有了解，写篇文章总结下。</p>
-<p>首先要搞清楚当下3个热门词语: 人工智能(AI)、机器学习(ML)和深度学习(DL)的区别和联系。理解三者之间关系的最简便方法就是将它们视觉化为一组同心圆：首先是最大的部分人工智能，然后是后来兴旺的机器学习，最后是促使当下人工智能大爆发的深度学习。</p>
-<p><img src="/images/ai_ml_dl.png" alt="3个概念关系"></p>
-<p>本文从以下几个方面概览下AI的各方面：</p>
-<p>首先要了解可以做哪些应用、整个训练流程有个大概印象，知道学习分类、学习框架，练习模型训练中用到的开发语言、科学计算库、图形库等，此时只是把ML的细节原理当成了黑箱子，稍微深入点的了解绕不过机器学习的算法和数学。</p>
-<h2 id="应用："><a href="#应用：" class="headerlink" title="应用："></a>应用：</h2><p>图像识别 这是比较常见的一种应用,可以用来做OCR、人脸定位、人脸识别、物体追踪等，识别王者荣耀英雄（<a href="https://zhuanlan.zhihu.com/p/28731349）" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/28731349）</a></p>
-<p>NLP (自然语言处理)</p>
-<p>语音识别</p>
-<p>游戏 比如AI自己玩魂斗罗、最近比较火的微信小游戏跳一跳(<a href="https://zhuanlan.zhihu.com/p/32636329" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/32636329</a>)</p>
-<p>风格转移 模仿大师的画作风格将其它的画进行转换</p>
-<p>手势识别</p>
-<p>超分辨率重建</p>
-<p>去噪、去马赛克</p>
-<h2 id="训练流程"><a href="#训练流程" class="headerlink" title="训练流程"></a>训练流程</h2><p>了解了AI能做到的事情，再来看看怎么训练AI使之学习到如何做到这些，模仿人类小孩的学习，想让他认识猫，先得指着一只猫告诉他这是猫，多看几只不同的猫，小孩就知道区分一堆动物中哪些是猫了，但他此时还是只知道识别猫，旁边一只不像猫的告诉他这是狗，看几只狗就又会识别狗了。常见的监督式AI学习过程与之类似，总结下来就是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">数据收集(如何低成本获取大量高质量数据、训练素材、数据集比训练模型更重要)</span><br><span class="line">数据分析</span><br><span class="line">数据清洗</span><br><span class="line">数据采样</span><br><span class="line">特征提取</span><br><span class="line">最小累积误差计算(梯度下降法)</span><br><span class="line">训练模型</span><br><span class="line">验证模型</span><br><span class="line">测试模型</span><br><span class="line">使用及改进</span><br></pre></td></tr></table></figure>
-<h2 id="学习分类："><a href="#学习分类：" class="headerlink" title="学习分类："></a>学习分类：</h2><h4 id="监督学习"><a href="#监督学习" class="headerlink" title="监督学习"></a>监督学习</h4><p>上面提的识别猫、狗的例子就是监督学习，收集打了正确标签的样本数据，通过学习框架编写代码读取数据集进行训练，一般来说数据越多模型可越准确。</p>
-<h4 id="无监督学习"><a href="#无监督学习" class="headerlink" title="无监督学习"></a>无监督学习</h4><p>计算机在没有结果标签的数据学习后，能获取有用数据的学习过程</p>
-<h4 id="半监督学习"><a href="#半监督学习" class="headerlink" title="半监督学习"></a>半监督学习</h4><p>介于上述两者之间</p>
-<h2 id="学习框架"><a href="#学习框架" class="headerlink" title="学习框架"></a>学习框架</h2><p>Tensorflow</p>
-<p>Caffe</p>
-<p>Pytorch</p>
-<p>Theano</p>
-<h2 id="开发语言及支持库"><a href="#开发语言及支持库" class="headerlink" title="开发语言及支持库"></a>开发语言及支持库</h2><p>Python是AI开发的首选语言、没有之一，大量成熟的库。</p>
-<p>大量支持库:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Numpy(基础N维数组库)</span><br><span class="line">SciPy(科学计算库)</span><br><span class="line">Pandas(数据分析处理库)</span><br><span class="line">Matplotlib(数据可视化库)</span><br><span class="line">Pil(图像处理库)</span><br><span class="line">scikit-learn(机器学习库)</span><br></pre></td></tr></table></figure>
-<h2 id="实现机器学习的技术"><a href="#实现机器学习的技术" class="headerlink" title="实现机器学习的技术"></a>实现机器学习的技术</h2><p>深度学习</p>
-<p>强化学习</p>
-<p>迁移学习</p>
-<h2 id="机器学习的算法"><a href="#机器学习的算法" class="headerlink" title="机器学习的算法"></a>机器学习的算法</h2><p>回归算法</p>
-<p>支持向量机SVM</p>
-<p>各种神经网络:如RNN、CNN等</p>
-<p>决策树</p>
-<p>聚类算法</p>
-<p>贝叶斯网络</p>
-<h2 id="数学"><a href="#数学" class="headerlink" title="数学"></a>数学</h2><p>对于大多数是工作多年的码农，尤其是客户端码农，数学早已还给了老师，但要想稍微深入了解机器学习，必须掌握一些数学知识，否则还只是API调用侠。</p>
-<p>微积分、线性代数是必选项，尤其是线性代数无论是AI还是游戏开发都是必选项，其次最好能了解概率论相关。</p>
-<p>下图做了一个详细的汇总:</p>
-<p><img src="/images/AI_summary.jpg" alt="AI (人工智能)汇总图"></p>
-<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://www.zhijin.vc/article/news_detail/356" target="_blank" rel="noopener">https://www.zhijin.vc/article/news_detail/356</a></p>
-<p><a href="https://www.bysocket.com/?p=1823" target="_blank" rel="noopener">https://www.bysocket.com/?p=1823</a></p>
-<p><a href="https://www.zhihu.com/question/51039416" target="_blank" rel="noopener">https://www.zhihu.com/question/51039416</a></p>
-<p><a href="https://www.zhihu.com/question/36324957" target="_blank" rel="noopener">https://www.zhihu.com/question/36324957</a></p>
-
+<p>首先要搞清楚当下3个热门词语: 人工智能(AI)、机器学习(ML)和深度学习(DL)的区别和联系。理解三者之间关系最简便方法就是将它们看作一组同心圆：最大的部分是人工智能，然后是后来兴旺的机器学习，最后是促使当下人工智能大爆发的深度学习。</p>
+        
+          <div class="more-link">
+            <a href="/2018/02/客户端码农学习ML-整体了解/#more">阅读更多 »</a>
+          </div>
+        
       
     </div>
 </article>
