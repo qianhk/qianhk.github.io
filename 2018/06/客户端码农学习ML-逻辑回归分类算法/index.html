@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>客户端码农学习ML —— 逻辑回归分类算法 | 钱凯凯</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url()">
+        <div class='av-pic' style="background-image: url(/assets/avatar.jpg)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>钱凯凯</div>
+        
+            <div>钱凯凯的博客</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/qianhk">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>客户端码农学习ML —— 逻辑回归分类算法</h1>
+    </header>
+
+    <section>
+      <h2 id="分类问题"><a href="#分类问题" class="headerlink" title="分类问题"></a>分类问题</h2><p>在线性回归中，预测的是连续值，而在分类问题中，预测的是离散值，预测的结果是特征属于哪个类别以及概率，比如是否垃圾邮件、肿瘤是良性还是恶性、根据花瓣大小判断哪种花，一般从最简单的二元分类开始，通常将一种类别表示为1，另一种类别表示为0。</p>
+<p>如下图，分别是几种不同的分类样式：</p>
+<p><img src="/images/ai_logistic_sample_3_kind.jpg" alt="ai_logistic_sample_3_kind"></p>
+<a id="more"></a>
+<h2 id="分类方法"><a href="#分类方法" class="headerlink" title="分类方法"></a>分类方法</h2><p>如果我们用线性回归算法来解决一个分类问题，那么假设函数的输出值可能远大于1，或者远小于0，会导致吴恩达机器学习教程中提到的分类不准或者阈值难以选择问题。</p>
+<p><img src="/images/ai_logistic_linear_regression_problem.jpg" alt="ai_logistic_linear_regression_problem"></p>
+<p>数学家们脑袋一转，想出来著名的sigmoid function，又名S形函数，是机器学习中诸多算法常用的一种激活函数，其图形如：</p>
+<p><img src="/images/ai_sigmoid_function.png" alt="ai_sigmoid_function"></p>
+<p>输出始终在0-1之间，完美应用在二分类问题，同时还能给出预测的概率。</p>
+<p>将线性回归的输出应用sigmoid函数后，即得到逻辑回归的模型函数，又名假设函数Hypothesis:</p>
+<p><img src="/images/ai_logistic_hypothesis.png" alt="ai_logistic_hypothesis"></p>
+<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>在线性回归中，一般采用样本误差的平方和来计算损失，批量训练中求均方误差MSE或者均方根误差RMSE，此方法的损失函数是凸函数，我们通过遍历待定系数w画图形或者数学计算可证明。凸函数便于通过梯度下降法求出最优解。在一个特征下损失函数形如抛物线, 如下图中左边的子图:</p>
+<p><img src="/images/ai_loss_linear_rmse_logistic_rmse_log.jpg" alt="ai_loss_linear_rmse_logistic_rmse_log"></p>
+<p>在加了sigmoid函数后，继续采用平方和来计算损失，得到的损失函数将不是个凸函数，难以求出全局最优解，图形绘制如上图中间的子图。</p>
+<p>数学家们脑袋又一转，又想到了对数损失函数。</p>
+<p><img src="/images/ai_logistic_loss_log_function.png" alt="ai_logistic_loss_log_function"></p>
+<p>当y=1时，图形形如下图中的左图，如果预测正确，损失为0，如果预测错误，损失无穷大。当y=0时，同样如果预测正确，损失为0，如果预测错误，损失无穷大。</p>
+<p><img src="/images/ai_logistic_loss_log_shape.jpg" alt="ai_logistic_loss_log_shape"></p>
+<p>写成一个完整的函数后变成：</p>
+<p><img src="/images/ai_logistic_loss_log_function_full.png" alt="ai_logistic_loss_log_function_full"></p>
+<p>这个复杂的函数对于自变量θ是一个凸函数，画出的图形可看上面绿色图形中右边的子图，数学证明可求证二阶导数非负，可参考：<a href="http://sofasofa.io/forum_main_post.php?postid=1000921" target="_blank" rel="noopener">http://sofasofa.io/forum_main_post.php?postid=1000921</a></p>
+<h2 id="代码实现分类"><a href="#代码实现分类" class="headerlink" title="代码实现分类"></a>代码实现分类</h2><h3 id="绘制损失函数图形"><a href="#绘制损失函数图形" class="headerlink" title="绘制损失函数图形"></a>绘制损失函数图形</h3><p>就是上面的绿色线条的图，首先准备数据和工具方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line"></span><br><span class="line">data = [(1, 0), (2, 0), (10, 1)]</span><br><span class="line"></span><br><span class="line">var_x = np.array([x for x, y in data])</span><br><span class="line">var_y = np.array([y for x, y in data])</span><br><span class="line"></span><br><span class="line">def sigmoid(z):</span><br><span class="line">    exp = np_exp(-z)</span><br><span class="line">    return 1.0 / (1 + exp)</span><br><span class="line"></span><br><span class="line">def np_exp(array):</span><br><span class="line">    return np.exp(np.minimum(array, 700))</span><br><span class="line"></span><br><span class="line">def np_log(array):</span><br><span class="line">    return np.log(np.maximum(array, 1e-250))</span><br></pre></td></tr></table></figure>
+<p>定义计算代码，实现多种损失函数计算，为便于绘制图形，假设b是固定值，只考虑w1系数变化，代码中的w参数等同于上述原理公式中的θ</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">loss_type = 3</span><br><span class="line"></span><br><span class="line">def calc_loss(_b=0, _w1=0):</span><br><span class="line">    result_mul = np.multiply(var_x, _w1)</span><br><span class="line">    result_add = result_mul + _b</span><br><span class="line">    result_sigmoid = sigmoid(result_add)</span><br><span class="line"></span><br><span class="line">    if loss_type == 1 or loss_type == 2:</span><br><span class="line">        if loss_type == 1:</span><br><span class="line">            loss_array = np.square(result_add - var_y)  # linear regression square loss</span><br><span class="line">        else:</span><br><span class="line">            loss_array = np.square(result_sigmoid - var_y)  # logistic regression square loss</span><br><span class="line">        return np.sqrt(np.mean(loss_array))</span><br><span class="line">    elif loss_type == 3:</span><br><span class="line">        first = np.multiply(-var_y, np_log(result_sigmoid))  # logistic regression log loss</span><br><span class="line">        second = (1 - var_y) * np_log(1 - result_sigmoid)</span><br><span class="line">        loss_array = first - second</span><br><span class="line">        return np.average(loss_array)</span><br><span class="line">    else:</span><br><span class="line">        loss_array = np.maximum(result_add, 0) - result_add * var_y + np.log(1 + np.exp(-np.abs(result_add)))</span><br><span class="line">        return np.average(loss_array)</span><br></pre></td></tr></table></figure>
+<p>绘制出图形</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    loss_vec = []</span><br><span class="line"></span><br><span class="line">    max_n = 1</span><br><span class="line">    b = 0</span><br><span class="line">    test_range = np.arange(-max_n, max_n, 0.01)</span><br><span class="line">    for step in test_range:</span><br><span class="line">        loss = calc_loss(b, step)</span><br><span class="line">        loss_vec.append(loss)</span><br><span class="line"></span><br><span class="line">    plt.figure()</span><br><span class="line">    plt.title(&apos;loss type: &apos; + str(loss_type))</span><br><span class="line">    plt.plot(test_range, loss_vec, &apos;g-&apos;)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<h3 id="实现线性可分样本分类"><a href="#实现线性可分样本分类" class="headerlink" title="实现线性可分样本分类"></a>实现线性可分样本分类</h3><p>即第一张图左边样本的分类，先给出完成效果看看：</p>
+<p><img src="/images/ai_logistic_train_result_blobs.png" alt="ai_logistic_train_result_blobs"></p>
+<p>导入库，生成mock数据，并定义h(θ)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import tensorflow as tf</span><br><span class="line">from sklearn import datasets</span><br><span class="line"></span><br><span class="line">random_state = np.random.RandomState(2)</span><br><span class="line">data, target = datasets.make_blobs(n_samples=123, n_features=2, centers=2, cluster_std=1.5, random_state=random_state)</span><br><span class="line">target = np.array(target, dtype=np.float32)</span><br><span class="line"># print(&apos;data=%s&apos; % data)</span><br><span class="line"># print(&apos;target=%s&apos; % target)</span><br><span class="line"></span><br><span class="line">b = tf.Variable(0, dtype=tf.float32, name=&apos;b&apos;)</span><br><span class="line">w1 = tf.Variable([[0]], dtype=tf.float32, name=&apos;w1&apos;)</span><br><span class="line">w2 = tf.Variable([[0]], dtype=tf.float32, name=&apos;w2&apos;)</span><br><span class="line"></span><br><span class="line">x_data1 = tf.placeholder(shape=[None, 1], dtype=tf.float32)</span><br><span class="line">x_data2 = tf.placeholder(shape=[None, 1], dtype=tf.float32)</span><br><span class="line">y_target = tf.placeholder(shape=[None, 1], dtype=tf.float32)</span><br><span class="line"></span><br><span class="line">result_matmul1 = tf.matmul(x_data1, w1)</span><br><span class="line">result_matmul2 = tf.matmul(x_data2, w2)</span><br><span class="line">result_add = result_matmul1 + result_matmul2 + b</span><br></pre></td></tr></table></figure>
+<p>定义优化器、训练并打出最优超参数看看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">use_base_method = 3</span><br><span class="line"></span><br><span class="line">if use_base_method == 1:</span><br><span class="line">    # result_sigmoid = 1.0 / (1 + tf.exp(tf.clip_by_value(-result_add, -1e250, 500)))</span><br><span class="line">    # first = tf.multiply(-y_target, tf.log(tf.clip_by_value(result_sigmoid, 1e-250, 1.0)))</span><br><span class="line">    # second = tf.multiply(1 - y_target, tf.log(tf.clip_by_value(1 - result_sigmoid, 1e-250, 1.0)))</span><br><span class="line">    # 自己写的方法貌似由于计算有溢出，通常得不到正确的解，有高手知道如何写法的请指导指导</span><br><span class="line">    result_sigmoid = tf.sigmoid(result_add)</span><br><span class="line">    first = -y_target * tf.log_sigmoid(result_add)</span><br><span class="line">    second = (1 - y_target) * tf.log(1 - result_sigmoid)</span><br><span class="line">    loss = first - second</span><br><span class="line">elif use_base_method == 2:</span><br><span class="line">    x = result_add</span><br><span class="line">    z = y_target</span><br><span class="line">    loss = tf.maximum(x, 0) - x * z + tf.log(1 + tf.exp(-tf.abs(x)))</span><br><span class="line">else:</span><br><span class="line">    loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=result_add, labels=y_target)</span><br><span class="line"></span><br><span class="line">loss = tf.reduce_mean(loss)</span><br><span class="line"></span><br><span class="line">optimizer = tf.train.GradientDescentOptimizer(0.5)</span><br><span class="line">train = optimizer.minimize(loss)</span><br><span class="line"></span><br><span class="line">sess = tf.Session()</span><br><span class="line">sess.run(tf.global_variables_initializer())</span><br><span class="line"></span><br><span class="line">var_x1 = np.array([x[0] for i, x in enumerate(data)])</span><br><span class="line">var_x2 = np.array([x[1] for i, x in enumerate(data)])</span><br><span class="line"></span><br><span class="line">data_amount = len(var_x1)</span><br><span class="line">batch_size = 20</span><br><span class="line"></span><br><span class="line">loss_vec = []</span><br><span class="line"></span><br><span class="line">for step in range(2001):</span><br><span class="line">    rand_index = np.random.choice(data_amount, size=batch_size)</span><br><span class="line">    tmp1 = var_x1[rand_index]</span><br><span class="line">    tmp2 = [tmp1]</span><br><span class="line">    x1 = np.transpose(tmp2)</span><br><span class="line">    x2 = np.transpose([var_x2[rand_index]])</span><br><span class="line">    y = np.transpose([target[rand_index]])</span><br><span class="line">    sess.run(train, feed_dict=&#123;x_data1: x1, x_data2: x2, y_target: y&#125;)</span><br><span class="line">    if step % 200 == 0:</span><br><span class="line">        loss_value = sess.run(loss, feed_dict=&#123;x_data1: x1, x_data2: x2, y_target: y&#125;)</span><br><span class="line">        loss_vec.append(loss_value)</span><br><span class="line">        print(&apos;step=%d w1=%s w2=%s b=%s loss=%s&apos; % (</span><br><span class="line">            step, sess.run(w1)[0, 0], sess.run(w2)[0, 0], sess.run(b), loss_value))</span><br><span class="line"></span><br><span class="line">[[_w1]] = sess.run(w1)</span><br><span class="line">[[_w2]] = sess.run(w2)</span><br><span class="line">_b = sess.run(b)</span><br><span class="line">print(&apos;last W1=%f W2=%f B=%f&apos; % (_w1, _w2, _b))</span><br></pre></td></tr></table></figure>
+<p>数据分类并模仿google的<a href="http://playground.tensorflow.org/#activation=tanh&amp;batchSize=10&amp;dataset=circle&amp;regDataset=reg-plane&amp;learningRate=0.03&amp;regularizationRate=0&amp;noise=0&amp;networkShape=4,2&amp;seed=0.06451&amp;showTestData=false&amp;discretize=false&amp;percTrainData=50&amp;x=true&amp;y=true&amp;xTimesY=false&amp;xSquared=false&amp;ySquared=false&amp;cosX=false&amp;sinX=false&amp;cosY=false&amp;sinY=false&amp;collectStats=false&amp;problem=classification&amp;initZero=false&amp;hideText=false" target="_blank" rel="noopener">A Neural Network playground</a>绘制分类背景：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">class1_x = [x[0] for i, x in enumerate(data) if target[i] == 1]</span><br><span class="line">class1_y = [x[1] for i, x in enumerate(data) if target[i] == 1]</span><br><span class="line">class2_x = [x[0] for i, x in enumerate(data) if target[i] != 1]</span><br><span class="line">class2_y = [x[1] for i, x in enumerate(data) if target[i] != 1]</span><br><span class="line"></span><br><span class="line">visualization_frame, _ = kai.make_visualization_frame(class1_x, class1_y, class2_x, class2_y)</span><br><span class="line">series_x1 = visualization_frame[&apos;x1&apos;]</span><br><span class="line">series_x2 = visualization_frame[&apos;x2&apos;]</span><br><span class="line">x1 = np.transpose([series_x1])</span><br><span class="line">x2 = np.transpose([series_x2])</span><br><span class="line">visual_probabilities = sess.run(result_sigmoid, feed_dict=&#123;x_data1: x1, x_data2: x2&#125;).T[0]</span><br><span class="line">visualization_frame[&apos;probabilities&apos;] = visual_probabilities</span><br><span class="line"></span><br><span class="line">sess.close()</span><br><span class="line"></span><br><span class="line">kai.show_visualization_data(class1_x, class1_y, class2_x, class2_y</span><br><span class="line">                            , loss_vec</span><br><span class="line">                            , target, probabilities</span><br><span class="line">                            , &apos;blobs kai linear classifier&apos;</span><br><span class="line">                            , visualization_frame)</span><br></pre></td></tr></table></figure>
+<p>工具方法如下：除绘制图形外，顺便输出了预测精度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">from sklearn import metrics</span><br><span class="line">import pandas as pd</span><br><span class="line"></span><br><span class="line">def make_visualization_frame(class1_x, class1_y, class2_x, class2_y):</span><br><span class="line">    min_x = min(min(class1_x), min(class2_x))</span><br><span class="line">    min_y = min(min(class1_y), min(class2_y))</span><br><span class="line">    max_x = max(max(class1_x), max(class2_x))</span><br><span class="line">    max_y = max(max(class1_y), max(class2_y))</span><br><span class="line">    n = int(max(max_x - min_x, max_y - min_y) * 3)</span><br><span class="line">    xs = np.linspace(min_x, max_x, n)</span><br><span class="line">    ys = np.linspace(min_y, max_y, n)</span><br><span class="line">    X1, X2 = np.meshgrid(xs, ys)</span><br><span class="line">    frame = pd.DataFrame()</span><br><span class="line">    frame[&apos;x1&apos;] = np.reshape(X1, n * n)</span><br><span class="line">    frame[&apos;x2&apos;] = np.reshape(X2, n * n)</span><br><span class="line">    return frame, np.zeros(n * n)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def show_visualization_data(class1_x, class1_y, class2_x, class2_y</span><br><span class="line">                            , log_losses</span><br><span class="line">                            , target_series, probabilities,</span><br><span class="line">                            title=None, visualization_frame=None):</span><br><span class="line">    plt.figure(figsize=(10, 8))</span><br><span class="line"></span><br><span class="line">    if title is not None:</span><br><span class="line">        plt.title(title)</span><br><span class="line"></span><br><span class="line">    ax = plt.subplot(121)</span><br><span class="line">    if visualization_frame is not None:</span><br><span class="line">        show_predict_probability(ax, visualization_frame)</span><br><span class="line"></span><br><span class="line">    ax.scatter(class1_x, class1_y, c=&apos;r&apos;, marker=&apos;o&apos;)</span><br><span class="line">    ax.scatter(class2_x, class2_y, c=&apos;b&apos;, marker=&apos;x&apos;)</span><br><span class="line"></span><br><span class="line">    if log_losses is not None:</span><br><span class="line">        ax = plt.subplot(222)</span><br><span class="line">        ax.plot(log_losses, color=&apos;m&apos;, linewidth=1)</span><br><span class="line"></span><br><span class="line">    if target_series is not None and probabilities is not None:</span><br><span class="line">        ax = plt.subplot(224)</span><br><span class="line">        false_positive_rate, true_positive_rate, thresholds = metrics.roc_curve(</span><br><span class="line">            target_series, probabilities)</span><br><span class="line">        ax.plot(false_positive_rate, true_positive_rate, c=&apos;c&apos;, label=&quot;our model&quot;)</span><br><span class="line">        ax.plot([0, 1], [0, 1], &apos;y:&apos;, label=&quot;random classifier&quot;)</span><br><span class="line">        accuracy = np.equal(target_series, np.round(probabilities)).astype(np.float32).mean()</span><br><span class="line">        print(&apos;\n accuracy=%.4f%%&apos; % (accuracy * 100))</span><br><span class="line"></span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def show_predict_probability(ax, frame):</span><br><span class="line">    x1 = frame[&apos;x1&apos;]</span><br><span class="line">    x2 = frame[&apos;x2&apos;]</span><br><span class="line">    probability = frame[&apos;probabilities&apos;]</span><br><span class="line">    class1_x = [x1[i] for i, x in enumerate(probability) if x &gt;= 0.5]</span><br><span class="line">    class1_y = [x2[i] for i, x in enumerate(probability) if x &gt;= 0.5]</span><br><span class="line">    class2_x = [x1[i] for i, x in enumerate(probability) if x &lt; 0.5]</span><br><span class="line">    class2_y = [x2[i] for i, x in enumerate(probability) if x &lt; 0.5]</span><br><span class="line">    ax.scatter(class1_x, class1_y, c=&apos;r&apos;, alpha=0.2, marker=&apos;s&apos;)</span><br><span class="line">    ax.scatter(class2_x, class2_y, c=&apos;b&apos;, alpha=0.2, marker=&apos;s&apos;)</span><br></pre></td></tr></table></figure>
+<h3 id="实现圆形分类的样本分类"><a href="#实现圆形分类的样本分类" class="headerlink" title="实现圆形分类的样本分类"></a>实现圆形分类的样本分类</h3><p>相对于上述线性可分样本，主要有两点不同，一是样本生成，二是h(θ):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 样本生成：</span><br><span class="line">data, target = datasets.make_circles(n_samples=100, factor=0.5, noise=0.05, random_state=random_state)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># h(θ) result_matmul1 2的值改为平方后再乘以w系数</span><br><span class="line">result_matmul1 = tf.matmul(x_data1 ** 2, w1)</span><br><span class="line">result_matmul2 = tf.matmul(x_data2 ** 2, w2)</span><br><span class="line">result_add = result_matmul1 + result_matmul2 + b</span><br><span class="line">loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=result_add, labels=y_target)</span><br></pre></td></tr></table></figure>
+<p>效果预览如下图：</p>
+<p><img src="/images/ai_logistic_train_result_circle.png" alt="ai_logistic_train_result_circle"></p>
+<h3 id="实现不规则分类的样本的分类"><a href="#实现不规则分类的样本的分类" class="headerlink" title="实现不规则分类的样本的分类"></a>实现不规则分类的样本的分类</h3><p>对于下图，一般不能立即看出什么假设函数能对应（数学高手或者有经验的除外），此时先用大杀器多项式多次试验，多项式写的够全、试验次数够多总能找到相对合适的模型。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 同样样本生成：</span><br><span class="line">data, target = datasets.make_moons(200, noise=0.10, random_state=random_state)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 大量超参数定义</span><br><span class="line">b = tf.Variable(0, dtype=tf.float32)</span><br><span class="line">w1 = tf.Variable([[0]], dtype=tf.float32)</span><br><span class="line">w2 = tf.Variable([[0]], dtype=tf.float32)</span><br><span class="line">w3 = tf.Variable([[0]], dtype=tf.float32)</span><br><span class="line">w4 = tf.Variable([[0]], dtype=tf.float32)</span><br><span class="line">w5 = tf.Variable([[0]], dtype=tf.float32)</span><br><span class="line">w6 = tf.Variable([[0]], dtype=tf.float32)</span><br><span class="line"></span><br><span class="line"># h(θ) 加了3次方</span><br><span class="line">result_1 = tf.matmul(x_data1, w1)</span><br><span class="line">result_2 = tf.matmul(x_data2, w2)</span><br><span class="line">result_3 = tf.matmul(x_data1 ** 2, w3)</span><br><span class="line">result_4 = tf.matmul(x_data2 ** 2, w4)</span><br><span class="line">result_5 = x_data1 ** 3 * w5</span><br><span class="line">result_6 = x_data2 ** 3 * w6</span><br><span class="line">result_add = b + result_1 + result_2 + result_3 + result_4 + result_5 + result_6</span><br><span class="line">loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=result_add, labels=y_target)</span><br></pre></td></tr></table></figure>
+<p>效果预览如下图：</p>
+<p><img src="/images/ai_logistic_train_result_moons.png" alt="ai_logistic_train_result_moons"></p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="http://sofasofa.io/forum_main_post.php?postid=1000921" target="_blank" rel="noopener">http://sofasofa.io/forum_main_post.php?postid=1000921</a></p>
+<h2 id=""><a href="#" class="headerlink" title="　"></a>　</h2><p>本文首发于<a href="http://qianhk.com">钱凯凯的博客</a> : <a href="http://qianhk.com/2018/02/客户端码农学习ML-逻辑回归分类算法/">http://qianhk.com/2018/02/客户端码农学习ML-逻辑回归分类算法/</a></p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-06-19T08:18:36.000Z" itemprop="datePublished">
+              2018-06-19
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/AI/">AI</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Logistic/">Logistic</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  <div id="comment-container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '客户端码农学习ML-逻辑回归分类算法',
+  owner: 'qianhk',
+  repo: 'qianhk.github.io',
+  oauth: {
+    client_id: '158d8d047a5c66420ecb',
+    client_secret: '5914732b33687719e97c518d1d0089a1a45ce3c0',
+  },
+})
+gitment.render('comment-container')
+</script>
+
+</div>
+
+            <footer>
+    <div>© 2016 - qianhk </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>
