@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>客户端码农学习ML —— 分类评估(准确率_精确率和召回率_ROC和曲线下面积) | 钱凯凯</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</head>
+
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url()">
+        <div class='av-pic' style="background-image: url(/assets/avatar.jpg)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>钱凯凯</div>
+        
+            <div>钱凯凯的博客</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/qianhk">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>客户端码农学习ML —— 分类评估(准确率_精确率和召回率_ROC和曲线下面积)</h1>
+    </header>
+
+    <section>
+      <p>判断各种机器学习方法训练而成的模型输出结果的好坏，需要一些评估方法，本文简单介绍二分类算法的几种评估方法，做个总结。</p>
+<p>首先需要有一些基本概念：对于样本来说，通常有两种类型，一种是正类别、一种是负类别，正负类别本身没有褒义贬义的含义，纯粹为了区分二分类两种不同情况。</p>
+<p>如“有没有狼的问题”，可以认为狼来了是正类别，没有狼是负类别；再比如“肿瘤是恶性还是良性”，恶性可以作为正类型，良性作为负类别。</p>
+<p>对于模型的预测，一般会有4种结果，以肿瘤问题为例：</p>
+<p>正样本、负样本解释</p>
+<p>TP TN FP FN</p>
+<a id="more"></a>
+<h2 id="准确率-Accuracy"><a href="#准确率-Accuracy" class="headerlink" title="准确率 Accuracy"></a>准确率 Accuracy</h2><p>准确率通常是我们最容易想到的一个评估分类模型的指标。通俗来说，准确率是指我们的模型预测正确的结果所占的比例。其值等于预测正确的样本数除以总样本数，取值范围[0,1]。</p>
+<p>$\text{Accuracy} = \frac{TP+TN}{TP+TN+FP+FN}$</p>
+<p>$f(x)=ax+b$</p>
+<p>$$\text{Accuracy} = \frac{TP+TN}{TP+TN+FP+FN} = \frac{1+90}{1+90+1+8} = 0.91$$</p>
+<p>$\text{Precision} = \frac{TP}{TP+FP}$</p>
+<p>$\text{精确率} = \frac{TP}{TP+FP} = \frac{1}{1+1} = 0.5$</p>
+<p>$\text{召回率} = \frac{TP}{TP+FN} = \frac{1}{1+8} = 0.11$</p>
+<p>$\text{Precision} = \frac{TP}{TP + FP} = \frac{8}{8+2} = 0.8$</p>
+<p>$$\text{Recall} = \frac{TP}{TP + FN} = \frac{8}{8 + 3} = 0.73$$</p>
+<p><img src="../images/ai_score_Accuracy.png" alt="ai_score_Accuracy"></p>
+<h2 id="精确率-Precision-和召回率-Recall"><a href="#精确率-Precision-和召回率-Recall" class="headerlink" title="精确率 Precision 和召回率 Recall"></a>精确率 Precision 和召回率 Recall</h2><p><img src="../images/ai_score_Precision.png" alt="ai_score_Precision"></p>
+<p><img src="../images/ai_score_Recall.png" alt="ai_score_Recall"></p>
+<p><img src="../images/ai_score_F1_score.png" alt="ai_score_F1_score"></p>
+<p>精确率指标尝试回答以下问题：</p>
+<p>在被识别为正类别的样本中，确实为正类别的比例是多少？</p>
+<p>召回率<br>召回率尝试回答以下问题：</p>
+<p>在所有正类别样本中，被正确识别为正类别的比例是多少？</p>
+<h2 id="ROC、曲线下面积"><a href="#ROC、曲线下面积" class="headerlink" title="ROC、曲线下面积"></a>ROC、曲线下面积</h2><p>TPR      true positive rate   等同召回率Recall<br>FPR      false positive rate<br>ROC     Receiver Operating Characteristic Curve 接收者操作特征曲线<br>AUC     Area Under Curve score 曲线下面积值</p>
+<p>ROC 曲线（接收者操作特征曲线）是一种显示分类模型在所有分类阈值下的效果的图表。该曲线绘制了真正例率、假正例率两个参数。</p>
+<p><img src="../images/ai_score_FPR.png" alt="ai_score_FPR"></p>
+<p><img src="../images/ai_score_FPR.png" alt="ai_score_TPR"></p>
+<p><img src="../images/ai_score_roc_origin_data.png" alt="ai_score_roc_origin_data"></p>
+<p><img src="../images/ai_score_roc1.png" alt="ai_score_roc1"></p>
+<p><img src="../images/ai_score_roc2.png" alt="ai_score_roc2"></p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://developers.google.cn/machine-learning/crash-course/classification/precision-and-recall" target="_blank" rel="noopener">精确率和召回率</a></p>
+<p><a href="https://developers.google.cn/machine-learning/crash-course/classification/roc-and-auc" target="_blank" rel="noopener">ROC 和曲线下面积</a></p>
+<h2 id=""><a href="#" class="headerlink" title="　"></a>　</h2><p>本文首发于<a href="http://qianhk.com">钱凯凯的博客</a> : <a href="http://qianhk.com/2018/08/分类评估(准确率_精确率和召回率_ROC和曲线下面积)/">http://qianhk.com/2018/08/分类评估(准确率_精确率和召回率_ROC和曲线下面积)/</a></p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-08-14T02:45:21.000Z" itemprop="datePublished">
+              2018-08-14
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/AI/">AI</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/评估/">评估</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  <div id="comment-container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '客户端码农学习ML-分类评估(准确率_精确率和召回率_ROC和曲线下面积)',
+  owner: 'qianhk',
+  repo: 'qianhk.github.io',
+  oauth: {
+    client_id: '158d8d047a5c66420ecb',
+    client_secret: '5914732b33687719e97c518d1d0089a1a45ce3c0',
+  },
+})
+gitment.render('comment-container')
+</script>
+
+</div>
+
+            <footer>
+    <div>© 2016 - qianhk </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
