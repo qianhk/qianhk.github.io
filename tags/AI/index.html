@@ -14,7 +14,7 @@
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
         </script>
-        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
     
 </head>
 
@@ -98,9 +98,7 @@
         <p>判断各种机器学习方法训练而成的模型输出结果的好坏，需要一些评估方法，本文简单介绍二分类算法的几种评估方法，做个总结。</p>
 <p>首先需要有一些基本概念：对于样本来说，通常有两种类型，一种是正类别、一种是负类别，正负类别本身没有褒义贬义的含义，纯粹为了区分二分类两种不同情况。</p>
 <p>如“有没有狼的问题”，可以认为狼来了是正类别，没有狼是负类别；再比如“肿瘤是恶性还是良性”，恶性可以作为正类型，良性作为负类别。</p>
-<p>对于模型的预测，一般会有4种结果，以肿瘤问题为例：</p>
-<p>正样本、负样本解释</p>
-<p>TP TN FP FN</p>
+<p>对于模型的预测，可以用2x2混淆矩阵来总结，该矩阵描述了所有可能出现的结果，共4种，以肿瘤问题为例：</p>
         
           <div class="more-link">
             <a href="/2018/08/客户端码农学习ML-分类评估(准确率_精确率和召回率_ROC和曲线下面积)/#more">阅读更多 »</a>

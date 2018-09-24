@@ -14,7 +14,7 @@
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
         </script>
-        <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
     
 </head>
 
@@ -65,36 +65,53 @@
       <p>判断各种机器学习方法训练而成的模型输出结果的好坏，需要一些评估方法，本文简单介绍二分类算法的几种评估方法，做个总结。</p>
 <p>首先需要有一些基本概念：对于样本来说，通常有两种类型，一种是正类别、一种是负类别，正负类别本身没有褒义贬义的含义，纯粹为了区分二分类两种不同情况。</p>
 <p>如“有没有狼的问题”，可以认为狼来了是正类别，没有狼是负类别；再比如“肿瘤是恶性还是良性”，恶性可以作为正类型，良性作为负类别。</p>
-<p>对于模型的预测，一般会有4种结果，以肿瘤问题为例：</p>
-<p>正样本、负样本解释</p>
-<p>TP TN FP FN</p>
+<p>对于模型的预测，可以用2x2混淆矩阵来总结，该矩阵描述了所有可能出现的结果，共4种，以肿瘤问题为例：</p>
 <a id="more"></a>
+<p><img src="/images/ai_score_tp_tn_fp_fn.png" alt="ai_score_tp_tn_fp_fn"></p>
+<p>（图表来自google官方机器学习教程，简单修改了下数值）</p>
+<p>从图表中可以看出共有100个肿瘤，其中绿色背景的预测正确，共94个（含1个恶性、93个良性），红色背景的预测错误，共6个（实际含5个恶性、1个良性）。</p>
+<p>下面给出4个符号的定义：</p>
+<p>真正例TP是指模型将正类别样本正确地预测为正类别。同样，真负例TN是指模型将负类别样本正确地预测为负类别。</p>
+<p>假正例FP是指模型将负类别样本错误地预测为正类别，而假负例FN是指模型将正类别样本错误地预测为负类别。</p>
+<p>简单的说： TP = 真正例，TN = 真负例，FP = 假正例，FN = 假负例。</p>
 <h2 id="准确率-Accuracy"><a href="#准确率-Accuracy" class="headerlink" title="准确率 Accuracy"></a>准确率 Accuracy</h2><p>准确率通常是我们最容易想到的一个评估分类模型的指标。通俗来说，准确率是指我们的模型预测正确的结果所占的比例。其值等于预测正确的样本数除以总样本数，取值范围[0,1]。</p>
-<p>$\text{Accuracy} = \frac{TP+TN}{TP+TN+FP+FN}$</p>
-<p>$f(x)=ax+b$</p>
-<p>$$\text{Accuracy} = \frac{TP+TN}{TP+TN+FP+FN} = \frac{1+90}{1+90+1+8} = 0.91$$</p>
-<p>$\text{Precision} = \frac{TP}{TP+FP}$</p>
-<p>$\text{精确率} = \frac{TP}{TP+FP} = \frac{1}{1+1} = 0.5$</p>
-<p>$\text{召回率} = \frac{TP}{TP+FN} = \frac{1}{1+8} = 0.11$</p>
-<p>$\text{Precision} = \frac{TP}{TP + FP} = \frac{8}{8+2} = 0.8$</p>
-<p>$$\text{Recall} = \frac{TP}{TP + FN} = \frac{8}{8 + 3} = 0.73$$</p>
-<p><img src="../images/ai_score_Accuracy.png" alt="ai_score_Accuracy"></p>
-<h2 id="精确率-Precision-和召回率-Recall"><a href="#精确率-Precision-和召回率-Recall" class="headerlink" title="精确率 Precision 和召回率 Recall"></a>精确率 Precision 和召回率 Recall</h2><p><img src="../images/ai_score_Precision.png" alt="ai_score_Precision"></p>
-<p><img src="../images/ai_score_Recall.png" alt="ai_score_Recall"></p>
-<p><img src="../images/ai_score_F1_score.png" alt="ai_score_F1_score"></p>
-<p>精确率指标尝试回答以下问题：</p>
-<p>在被识别为正类别的样本中，确实为正类别的比例是多少？</p>
-<p>召回率<br>召回率尝试回答以下问题：</p>
-<p>在所有正类别样本中，被正确识别为正类别的比例是多少？</p>
-<h2 id="ROC、曲线下面积"><a href="#ROC、曲线下面积" class="headerlink" title="ROC、曲线下面积"></a>ROC、曲线下面积</h2><p>TPR      true positive rate   等同召回率Recall<br>FPR      false positive rate<br>ROC     Receiver Operating Characteristic Curve 接收者操作特征曲线<br>AUC     Area Under Curve score 曲线下面积值</p>
+<p>套用上面4个符号的定义，可以形成如下公式：</p>
+<p><strong> 【如果看到公式是乱七八糟的字符，请刷新下网页】 </strong></p>
+<p>$$\text{准确率} = \frac{预测准确数}{样本总数} = \frac{TP+TN}{TP+TN+FP+FN}$$</p>
+<p>因此对于上面的图表：</p>
+<p>$\text{Accuracy} = \frac{TP+TN}{TP+TN+FP+FN} = \frac{1+93}{1+93+1+5} = 0.94$</p>
+<p>94%的准确性一般来说还不错，但是对于本身分类不平衡的样本来说会有很严重的问题，对于本例来说就是恶性肿瘤数本身占比肿瘤整体很少，只有6%。如果我们写个模型总是预测肿瘤为良性，那么准确率是94个良性除以样本100，结果还是94%的预测准确率，由此可以推断准确率不是个靠谱的指标。</p>
+<p>因此科学家们定义了两个能够更好地评估分类不平衡问题的指标：精确率和召回率。</p>
+<h2 id="精确率-Precision-和召回率-Recall"><a href="#精确率-Precision-和召回率-Recall" class="headerlink" title="精确率 Precision 和召回率 Recall"></a>精确率 Precision 和召回率 Recall</h2><p>精确率是指：在被识别为正类别的样本中，确实为正类别的比例是多少？</p>
+<p>$$\text{Precision} = \frac{TP}{TP+FP}$$</p>
+<p>召回率是指：在所有正类别样本中，被正确识别为正类别的比例是多少？</p>
+<p>$$\text{Recall} = \frac{TP}{TP + FN}$$</p>
+<p>对于上面肿瘤的例子：$\text{精确率} = \frac{TP}{TP+FP} = \frac{1}{1+1} = 0.5$，而$\text{召回率} = \frac{TP}{TP+FN} = \frac{1}{1+5} = 0.17$，可以看出精确率和召回率都很低，换句话说，识别精度不高代表识别为恶性肿瘤的可能很大几率并不是恶性肿瘤，召回率低代表很多恶性肿瘤没能识别出来。</p>
+<p>一般来说人们希望精确率和召回率都高，最好都是100%，这样代表识别出来的样本确实都是正类别，且所有正类别都被识别出来了。但是现实中这两个指标往往是此消彼长的关系，也就是说，提高精确率通常会降低召回率值，即使不从数学上证明，从感觉上也能理解，因为这两个指标的目标刚好相反，一个要求尽可能精确，那么要抛弃掉难以决定的把握不大的样本；而另一个指标要求尽可能识别出所有的正类别，那么就可能带入把握不大的样本。可以想象下识别垃圾邮件，精确与识别全难两全。</p>
+<p>那么如果两个模型识别样本的精确率与召回率分别是：0.6 0.6 与 0.5 0.7，那么哪个好了？</p>
+<p>于是数学家又定义了一个指标去计算，名叫：F score，常见的是F1 score。</p>
+<h2 id="F1值"><a href="#F1值" class="headerlink" title="F1值"></a>F1值</h2><p>F1 score 是精确值和召回率的调和均值，它的公式是：</p>
+<p>$$ F_1 = \frac{2}{\frac{1}{recall} + \frac{1}{precision}} = 2 \cdot \frac{precision \cdot recall}{precision + recall} $$</p>
+<p>对于极端最好的例子：精确率=1.0 召回率=1.0时, $F_1 = 2 \cdot \frac{1.0 \cdot 1.0}{1.0 + 1.0} = 1.0 $</p>
+<p>于是对于上面的两个例子，F1 score分别是：</p>
+<p>precision=0.6 recall=0.6时 $F_1 = 2 \cdot  \frac{0.6 \cdot 0.6}{0.6 + 0.6} = 0.60 $</p>
+<p>precision=0.5 recall=0.7时 $F_1 = 2 \cdot  \frac{0.5 \cdot 0.7}{0.5 + 0.7} = 0.58 $</p>
+<p>显然precision=0.6 recall=0.6的模型效果相对稍微好点。</p>
+<h2 id="ROC、曲线下面积-AUC"><a href="#ROC、曲线下面积-AUC" class="headerlink" title="ROC、曲线下面积(AUC)"></a>ROC、曲线下面积(AUC)</h2><p>除了上面的F1值外，还有方法来判断一个分类模型的好坏，且更直观，它就是ROC曲线。</p>
 <p>ROC 曲线（接收者操作特征曲线）是一种显示分类模型在所有分类阈值下的效果的图表。该曲线绘制了真正例率、假正例率两个参数。</p>
+<p>同样的，首先定义几个概念：</p>
+<p>TPR      true positive rate   等同召回率Recall<br>FPR      false positive rate<br>ROC     Receiver Operating Characteristic Curve 接收者操作特征曲线<br>AUC     Area Under Curve score 曲线下面积值</p>
 <p><img src="../images/ai_score_FPR.png" alt="ai_score_FPR"></p>
 <p><img src="../images/ai_score_FPR.png" alt="ai_score_TPR"></p>
 <p><img src="../images/ai_score_roc_origin_data.png" alt="ai_score_roc_origin_data"></p>
 <p><img src="../images/ai_score_roc1.png" alt="ai_score_roc1"></p>
 <p><img src="../images/ai_score_roc2.png" alt="ai_score_roc2"></p>
-<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://developers.google.cn/machine-learning/crash-course/classification/precision-and-recall" target="_blank" rel="noopener">精确率和召回率</a></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说，本文介绍的几个指标对于初学者来说还是比较绕的，先是比较直白的准确率，但是对于分类不均衡的样本来说准确率很不靠谱，于是有了精确率和召回率，但由于有两个指标，对于多个模型这两个指标差不多的情况下难以判断哪个更好于是出现了F1值，同时还有更直观的ROC曲线和曲线下面积，直接通过图形化方式直观的去看一个模型在各种分类阈值下的表现。</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://developers.google.cn/machine-learning/crash-course/classification/accuracy" target="_blank" rel="noopener">准确率</a></p>
+<p><a href="https://developers.google.cn/machine-learning/crash-course/classification/precision-and-recall" target="_blank" rel="noopener">精确率和召回率</a></p>
 <p><a href="https://developers.google.cn/machine-learning/crash-course/classification/roc-and-auc" target="_blank" rel="noopener">ROC 和曲线下面积</a></p>
+<p><a href="https://en.wikipedia.org/wiki/F1_score" target="_blank" rel="noopener">F1 score</a></p>
+<p><a href="http://alexkong.net/2013/06/introduction-to-auc-and-roc/" target="_blank" rel="noopener">ROC和AUC介绍以及如何计算AUC</a></p>
 <h2 id=""><a href="#" class="headerlink" title="　"></a>　</h2><p>本文首发于<a href="http://qianhk.com">钱凯凯的博客</a> : <a href="http://qianhk.com/2018/08/分类评估(准确率_精确率和召回率_ROC和曲线下面积)/">http://qianhk.com/2018/08/分类评估(准确率_精确率和召回率_ROC和曲线下面积)/</a></p>
 
 
