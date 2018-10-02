@@ -110,7 +110,9 @@
 <p><img src="/images/ai_score_roc1.png" alt="ai_score_roc1"></p>
 <p>AUC (Area Under Curve) ROC曲线下面积值，也就是说，曲线下面积测量的是从 (0,0) 到 (1,1) 之间整个 ROC 曲线以下的整个二维面积。</p>
 <p><img src="/images/ai_score_roc2.png" alt="ai_score_roc2"></p>
-<p>最大面积是1，此时覆盖左上角，而左上角TPR是1.0， FPR是0.0，说明所有的正例都识别出来了，而没有一个负例被错误的识别为正例。</p>
+<p>前文逻辑回归算法的一个模型可视化图：有样本及预测结果预览（左侧），还有训练时每次迭代损失值（右上角），accuracy，auc等指标（下方）：</p>
+<p><img src="/images/ai_score_loss_accuracy_roc_auc.png" alt="ai_score_loss_accuracy_roc_auc"></p>
+<p>当面积是最大值1的时候，此时覆盖左上角，而左上角TPR是1.0， FPR是0.0，说明所有的正例都识别出来了，而没有一个负例被错误的识别为正例。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总的来说，本文介绍的几个指标对于初学者来说还是比较绕的，先是比较直白的准确率，但是对于分类不均衡的样本来说准确率很不靠谱，于是有了精确率和召回率，但由于有两个指标，对于多个模型这两个指标差不多的情况下难以判断哪个更好于是出现了F1值，同时还有更直观的ROC曲线和曲线下面积，直接通过图形化方式直观的去看一个模型在各种分类阈值下的表现。</p>
 <h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://developers.google.cn/machine-learning/crash-course/classification/accuracy" target="_blank" rel="noopener">准确率</a></p>
 <p><a href="https://developers.google.cn/machine-learning/crash-course/classification/precision-and-recall" target="_blank" rel="noopener">精确率和召回率</a></p>
