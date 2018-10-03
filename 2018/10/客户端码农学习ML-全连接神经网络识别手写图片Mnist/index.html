@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>客户端码农学习ML —— 全连接神经网络识别手写图片Mnist | 钱凯凯</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</head>
+
+<body>
+<!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url()">
+        <div class='av-pic' style="background-image: url(/assets/avatar.jpg)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>钱凯凯</div>
+        
+            <div>钱凯凯的博客</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/qianhk">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>客户端码农学习ML —— 全连接神经网络识别手写图片Mnist</h1>
+    </header>
+
+    <section>
+      <h2 id="由来"><a href="#由来" class="headerlink" title="由来"></a>由来</h2><p>在初步学习了线性回归算法、逻辑回归分类算法并练习后，终于学习到了神经网络(Neural Network)。</p>
+<p>神经网络是模仿生物大脑中的神经网络设计而成，每个神经元接受外部刺激，进行一点处理，输出到下个神经元，众多神经元合作完成了对外部刺激的反应，并输出行动指令。</p>
+<p>每个神经元都可以被认为是一个处理单元，它含有许多输入/树突 (input/Dendrite)，并且有一个输出/轴突(output/Axon)。神经网络是大量神经元相互链接并通过电脉冲来交流的一个网络。</p>
+<p><img src="/images/ai_nn_sheng_shenjing.png" alt="ai_nn_sheng_shenjing"></p>
+<p>神经网络模型建立在很多神经元之上，每一个神经元又是一个个学习模型。这些神经元采纳一些特征作为输入，并且根据本身的模型提供一个输出。下图是一个以逻辑回归模型作为神经元的示例，在神经网络中，参数又可被成为权重(weight)，输出节点会有一个激活函数g(z)改变其线性关系为非线性关系。</p>
+<p>常见激活函数有：Sigmoid、ReLU、Tanh及其变种。</p>
+<p><img src="/images/ai_nn_sheng_shenjing_unit.png" alt="ai_nn_sheng_shenjing_unit"></p>
+<a id="more"></a>
+<p>当我们增加多个神经元后，就可以形成下图的神经网络模型：</p>
+<p><img src="/images/ai_nn_full_model.png" alt="ai_nn_full_model"></p>
+<p>其中第一层输入层，含有x1 , x2 , x3等输入特征，我们将原始数据输入给它们。<br>第二层是隐藏层，a1 , a2 , a3是中间单元，它们负责将数据进行处理，然后呈递到下一层。<br>第三层，输出单元，它负责计算</p>
+<p>上去就是一个简单的全连接神经网络, 下面先用神经网络模拟个逻辑与、或试试手。</p>
+<p>也可以先到google官方Neural Network Playground体验下，以便对nn有个直观印象。</p>
+<p><img src="/images/ai_nn_google_playground.png" alt="ai_nn_google_playground"></p>
+<h2 id="逻辑与、或"><a href="#逻辑与、或" class="headerlink" title="逻辑与、或"></a>逻辑与、或</h2><p>码农对于逻辑与、或的规则很清楚，如下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数1</th>
+<th style="text-align:center">参数2</th>
+<th style="text-align:center">结果：AND</th>
+<th style="text-align:center">结果: OR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+<p>我们需要的训练就是输入参数后能输出1或者0的结果，与逻辑二分类算法有点像，但是神经网络使用不同的损失函数来训练。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 首先准备样本共4个，有特征x1、x2，x0是bias，固定值1。</span><br><span class="line">x0 = np.array([1, 1, 1, 1], dtype=np.float32)</span><br><span class="line">x1 = np.array([0, 0, 1, 1], dtype=np.float32)</span><br><span class="line">x2 = np.array([0, 1, 0, 1], dtype=np.float32)</span><br><span class="line"></span><br><span class="line"># 然后准备目标值target</span><br><span class="line">if arg_type == &apos;AND&apos;:</span><br><span class="line">    target = np.array([0, 0, 0, 1], dtype=np.float32)</span><br><span class="line">else arg_type == &apos;OR&apos;:</span><br><span class="line">    target = np.array([0, 1, 1, 1], dtype=np.float32)</span><br><span class="line"></span><br><span class="line"># 把特征和目标值转成矩证以便下面使用</span><br><span class="line">m_x = np.vstack((x0, x1, x2)).T</span><br><span class="line">m_target = np.matrix(target).T</span><br></pre></td></tr></table></figure>
+<p>然后写TensorFlow计算图，定义一个输入为3个节点，输出为1个节点的单一神经元网络：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">v_w = tf.Variable(np.zeros((3, 1)), dtype=tf.float32)</span><br><span class="line">h_x = tf.placeholder(shape=[None, 3], dtype=tf.float32)</span><br><span class="line">h_target = tf.placeholder(shape=[None, 1], dtype=tf.float32)</span><br><span class="line"></span><br><span class="line">z = tf.matmul(h_x, v_w)</span><br><span class="line">loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=z, labels=h_target)</span><br><span class="line">loss = tf.reduce_mean(loss)</span><br><span class="line">optimizer = tf.train.GradientDescentOptimizer(200)</span><br><span class="line">train = optimizer.minimize(loss)</span><br></pre></td></tr></table></figure>
+<p>最后进行训练，一次给入全部4个样本:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">sess = tf.Session()</span><br><span class="line">sess.run(tf.global_variables_initializer())</span><br><span class="line"></span><br><span class="line">loss_vec = []</span><br><span class="line"></span><br><span class="line">for step in range(401):</span><br><span class="line">    feed_dict = &#123;h_x: m_x, h_target: m_target&#125;</span><br><span class="line">    sess.run(train, feed_dict)</span><br><span class="line">    loss_vec.append(sess.run(loss, feed_dict=feed_dict))</span><br><span class="line">    if step % 100 == 0:</span><br><span class="line">        print(&apos;step=%d W=%s loss=%s&apos; % (</span><br><span class="line">            step, sess.run(v_w).ravel(), sess.run(loss, feed_dict=feed_dict)))</span><br><span class="line"></span><br><span class="line">_w = sess.run(v_w).ravel()</span><br><span class="line">sess.close()</span><br></pre></td></tr></table></figure>
+<p>如果是AND，那么最后的W=[-75.  50.  50.] loss极低，只有1.0416e-11，换句话说：y = sigmoid(-75 + 50 <em> x<sub>1</sub> + 50 </em> x<sub>2</sub>)</p>
+<p>如果是OR，那么最后的W=[-25.  50.  50.]，换句话说：y = sigmoid(-25 + 50 <em> x<sub>1</sub> + 50 </em> x<sub>2</sub>)</p>
+<p>完整代码可见：(<a href="https://github.com/qianhk/FeiPython/blob/master/Python3Test/kaiFullNN/kai_logic_and_or.py" target="_blank" rel="noopener">https://github.com/qianhk/FeiPython/blob/master/Python3Test/kaiFullNN/kai_logic_and_or.py</a>)</p>
+<h2 id="Mnist手写数字数据集"><a href="#Mnist手写数字数据集" class="headerlink" title="Mnist手写数字数据集"></a>Mnist手写数字数据集</h2><p>我们用机器学习界的Hello Word：Mnist手写数字识别来体验下全连接神经网络。</p>
+<p>官网（<a href="http://yann.lecun.com/exdb/mnist/" target="_blank" rel="noopener">http://yann.lecun.com/exdb/mnist/</a> ），除了有下载地址，还有各种算法历年来拿这个数据集练手的最佳纪录。</p>
+<p>该数据集也可以通过from tensorflow.examples.tutorials.mnist import input_data自动下载，mnist = input_data.read_data_sets(‘./cache/mnist/‘, one_hot=True)，指定缓存目录即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print(f&apos;Train data size: &#123;mnist.train.num_examples&#125;&apos;)</span><br><span class="line">print(f&apos;Validation data size: &#123;mnist.validation.num_examples&#125;&apos;)</span><br><span class="line">print(f&apos;Test data size: &#123;mnist.test.num_examples&#125;&apos;)</span><br></pre></td></tr></table></figure>
+<p>通过上述代码可得知，训练集样本: 55000，验证集样本：5000，测试集样本10000条。</p>
+<p>训练时可以通过xset, yset = mnist.train.next_batch(batch_size: 8)取的一批数据，xset里是特征值，yset里是目标值，单个特征的shape是(784,)，即图片长宽分别为28*28，单个独热编码形式的label.shape=(10,)，形如[ 0.  0.  0.  0.  0.  0.  0.  1.  0.  0.]</p>
+<h2 id="实现Mnist数据集训练NN"><a href="#实现Mnist数据集训练NN" class="headerlink" title="实现Mnist数据集训练NN"></a>实现Mnist数据集训练NN</h2><p>由于图片尺寸是28*28，所以输入特征有784个，因此输入层是784个节点。</p>
+<p>我们定义一个500个节点的隐藏层。</p>
+<p>目标值是0到9共10个数字，所以输出层是10个节点。</p>
+<p>首先定义计算图：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">INPUT_NODE = 28 * 28  # 输入节点数量</span><br><span class="line">OUTPUT_NODE = 10  # 输出节点数量</span><br><span class="line"></span><br><span class="line">LAYER1_NODE = 500 # 第一个隐藏层节点数量</span><br><span class="line"></span><br><span class="line"># 定义一个获取权重的方法</span><br><span class="line">def get_weight_variable(shape, regularizer):</span><br><span class="line">    weights = tf.get_variable(&apos;weights&apos;, shape, initializer=tf.truncated_normal_initializer(stddev=0.1))</span><br><span class="line">    if regularizer is not None:</span><br><span class="line">        tf.add_to_collection(tf.GraphKeys.LOSSES, regularizer(weights))</span><br><span class="line">    return weights</span><br><span class="line"></span><br><span class="line"># 定义计算图，输入层 矩阵乘 隐藏层权重，激活函数Relu</span><br><span class="line">def inference(input_tensor, regularizer):</span><br><span class="line">    with tf.variable_scope(&apos;layer1&apos;):</span><br><span class="line">        weights = get_weight_variable([INPUT_NODE, LAYER1_NODE], regularizer)</span><br><span class="line">        biases = tf.get_variable(&quot;biases&quot;, [LAYER1_NODE], initializer=tf.constant_initializer(0))</span><br><span class="line">        layer1 = tf.nn.relu(tf.matmul(input_tensor, weights) + biases)</span><br><span class="line"></span><br><span class="line">    with tf.variable_scope(&apos;layer2&apos;):</span><br><span class="line">        weights = get_weight_variable([LAYER1_NODE, OUTPUT_NODE], regularizer)</span><br><span class="line">        biases = tf.get_variable(&quot;biases&quot;, [OUTPUT_NODE], initializer=tf.constant_initializer(0))</span><br><span class="line">        output_layer = tf.matmul(layer1, weights) + biases</span><br><span class="line"></span><br><span class="line">    return output_layer</span><br></pre></td></tr></table></figure>
+<p>接下来写定义训练方法，使用了L2正则化和滑动平均模型以便模型可以更好的泛化到一般情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">def train(mnist):</span><br><span class="line">    x = tf.placeholder(tf.float32, [None, mnist_inference.INPUT_NODE], name=&apos;x-input&apos;)</span><br><span class="line">    y_ = tf.placeholder(tf.float32, [None, mnist_inference.OUTPUT_NODE], name=&apos;y-input&apos;)</span><br><span class="line"></span><br><span class="line">    regularizer = tf.contrib.layers.l2_regularizer(REGULARIZATION_RATE) # 使用l2正则化</span><br><span class="line">    y = mnist_inference.inference(x, regularizer) # 使用刚刚定义的计算图</span><br><span class="line">    global_step = tf.Variable(0, trainable=False, name=&apos;globalStep&apos;)</span><br><span class="line"></span><br><span class="line">    variable_averages = tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY, global_step)</span><br><span class="line">    variables_averages_op = variable_averages.apply(tf.trainable_variables())</span><br><span class="line">    average_y = y</span><br><span class="line"></span><br><span class="line">    cross_entroy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))</span><br><span class="line">    cross_entroy_mean = tf.reduce_mean(cross_entroy)</span><br><span class="line">    loss = cross_entroy_mean + tf.add_n(tf.get_collection(tf.GraphKeys.LOSSES))</span><br><span class="line"></span><br><span class="line">	# 使用指数衰减的学习率方法，这样初期学习率可略高一点提高训练速度，后面会自动慢慢的降低学习率</span><br><span class="line">    learning_rate = tf.train.exponential_decay(LEARNING_RATE_BASE, global_step</span><br><span class="line">                                               , mnist.train.num_examples / BATCH_SIZE, LEARNING_RATE_DECAY)</span><br><span class="line"></span><br><span class="line">    train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss, global_step=global_step)</span><br><span class="line"></span><br><span class="line">    # train_op = tf.group(train_step, variables_averages_op)</span><br><span class="line">    with tf.control_dependencies([train_step, variables_averages_op]):</span><br><span class="line">        train_op = tf.no_op(name=&apos;train&apos;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    saver = tf.train.Saver() # 每1000轮迭代保存一次模型训练结果，以便恢复训练或者使用这些模型评估训练成果</span><br><span class="line">    with tf.Session() as sess:</span><br><span class="line">        sess.run(tf.global_variables_initializer())</span><br><span class="line">        for i in range(TRAINING_STEPS):</span><br><span class="line">            xs, ys = mnist.train.next_batch(BATCH_SIZE)</span><br><span class="line">            _, loss_value, step = sess.run([train_op, loss, global_step], feed_dict=&#123;x: xs, y_: ys&#125;)</span><br><span class="line">            if i % 1000 == 0:</span><br><span class="line">                print(f&apos;After &#123;step&#125; training step(s), loss on training is &#123;loss_value&#125;&apos;)</span><br><span class="line">                saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step=global_step)</span><br><span class="line">        print(f&apos;After last &#123;step&#125; training step(s), loss on training is &#123;loss_value&#125;&apos;)</span><br><span class="line">        saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step=global_step)</span><br></pre></td></tr></table></figure>
+<p>当训练11000次后，损失0.06579（After last 11000 training step(s), loss on training is 0.06579054892063141）</p>
+<p>完整代码可见：(<a href="https://github.com/qianhk/FeiPython/tree/master/Python3Test/kaiMnist/full" target="_blank" rel="noopener">https://github.com/qianhk/FeiPython/tree/master/Python3Test/kaiMnist/full</a>)</p>
+<h2 id="评估训练过程中的模型精度"><a href="#评估训练过程中的模型精度" class="headerlink" title="评估训练过程中的模型精度"></a>评估训练过程中的模型精度</h2><p>我们再写个评估代码看看准确率怎么样，评估代码可以和训练代码开两个控制台一起运行，评估代码每隔若干秒比如5秒使用验证集预测下5000个样本的准确率，当然也可以选择测试集，此处只是初步体验下预测效果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">x = tf.placeholder(tf.float32, [None, mnist_inference.INPUT_NODE], name=&apos;x-input&apos;)</span><br><span class="line">y_ = tf.placeholder(tf.float32, [None, mnist_inference.OUTPUT_NODE], name=&apos;y-input&apos;)</span><br><span class="line">validate_feed = &#123;x: mnist.validation.images, y_: mnist.validation.labels&#125;</span><br><span class="line"></span><br><span class="line"># 同样要定义计算图，直接用训练里定义好的方法</span><br><span class="line">y = mnist_inference.inference(x, None)</span><br><span class="line"></span><br><span class="line"># 判断预测值与样本里目标值是否相等</span><br><span class="line">correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))</span><br><span class="line">accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))</span><br><span class="line"># saver = tf.train.Saver()</span><br><span class="line"></span><br><span class="line">variable_averages = tf.train.ExponentialMovingAverage(mnist_train.MOVING_AVERAGE_DECAY)</span><br><span class="line">variable_to_restore = variable_averages.variables_to_restore()</span><br><span class="line">print(f&apos;variable_to_restore=&#123;variable_to_restore&#125;&apos;)</span><br><span class="line">saver = tf.train.Saver(variable_to_restore)</span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">    with tf.Session() as sess:</span><br><span class="line">    	 # 从训练代码里保存的模型文件中读取参数并运行预测方法</span><br><span class="line">        ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_SAVE_PATH)</span><br><span class="line">        if ckpt and ckpt.model_checkpoint_path:</span><br><span class="line">            saver.restore(sess, ckpt.model_checkpoint_path)</span><br><span class="line">            global_step = ckpt.model_checkpoint_path.split(&apos;/&apos;)[-1].split(&apos;-&apos;)[-1]</span><br><span class="line">            accuracy_score = sess.run(accuracy, feed_dict=validate_feed)</span><br><span class="line">            print(f&apos;After &#123;global_step&#125; training step(s), validation accuracy = &#123;accuracy_score&#125;&apos;)</span><br><span class="line">        else:</span><br><span class="line">            print(&apos;No checkpoint file found&apos;)</span><br><span class="line">    time.sleep(EVAL_INTERVAL_SECS)</span><br></pre></td></tr></table></figure>
+<p>最终，在验证集上准确率是: 98.3%，效果还是很不错的，在用上了正则化及滑动平均模型后仅仅一层隐藏层就能达到比较满意的效果。如果不是用上述优化方法，可能在训练集上得到更好的效果但由于过拟合导致泛化能力不行，从而在验证集或者测试集上准确率略微下降, 视参数不同准确率可能在94%-96%左右。</p>
+<h2 id="Neural-Network常用损失函数"><a href="#Neural-Network常用损失函数" class="headerlink" title="Neural Network常用损失函数"></a>Neural Network常用损失函数</h2><p>在线性回归中，我们常用平方损失（又称为 L2 损失）作为损失函数, 均方误差MSE作为每个样本的平均平方损失， RMSE作为均方根误差。</p>
+<p>在逻辑回归二分类算法中，我们常用对数损失函数作为损失函数。</p>
+<p>而在神经网络中，我们主要是用各种交叉熵（cross_entropy）作为损失函数, 在TensorFlow中主要是末尾是tf.nn.xxxxxx_cross_entropy_with_logits的方法。</p>
+<p>logit函数定义为：$L(p)=ln\frac{p}{1-p}$, 是一种将取值范围在[0,1]内的概率映射到实数域[-inf,inf]的函数，如果p=0.5，函数值为0；p&lt;0.5，函数值为负；p&gt;0.5，函数值为正。</p>
+<p>相对地，softmax和sigmoid则都是将[-inf,inf]映射到[0,1]的函数。</p>
+<p>常见的有如下3种：</p>
+<h3 id="tf-nn-sigmoid-cross-entropy-with-logits"><a href="#tf-nn-sigmoid-cross-entropy-with-logits" class="headerlink" title="tf.nn.sigmoid_cross_entropy_with_logits"></a>tf.nn.sigmoid_cross_entropy_with_logits</h3><p>计算网络输出logits和标签labels的sigmoid cross entropy loss，衡量独立不互斥离散分类任务的误差。</p>
+<h3 id="tf-nn-softmax-cross-entropy-with-logits"><a href="#tf-nn-softmax-cross-entropy-with-logits" class="headerlink" title="tf.nn.softmax_cross_entropy_with_logits"></a>tf.nn.softmax_cross_entropy_with_logits</h3><p>计算网络输出logits和标签labels的softmax cross entropy loss，在多类别问题中，Softmax 会为每个类别分配一个用小数表示的概率。这些用小数表示的概率相加之和必须是 1.0。与其他方式相比，这种附加限制有助于让训练过程更快速地收敛。</p>
+<h3 id="tf-nn-sparse-softmax-cross-entropy-with-logits"><a href="#tf-nn-sparse-softmax-cross-entropy-with-logits" class="headerlink" title="tf.nn.sparse_softmax_cross_entropy_with_logits"></a>tf.nn.sparse_softmax_cross_entropy_with_logits</h3><p>这个版本是tf.nn.softmax_cross_entropy_with_logits的易用版本，每个label的取值是从[0, num_classes)的离散值。</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://developers.google.cn/machine-learning/crash-course/multi-class-neural-networks/softmax" target="_blank" rel="noopener">多类别神经网络 (Multi-Class Neural Networks)：Softmax</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/33560183" target="_blank" rel="noopener">TF里几种loss和注意事项</a></p>
+<p><a href="http://shuokay.com/2017/06/23/cross-entropy/" target="_blank" rel="noopener">怎样理解 Cross Entropy</a></p>
+<h2 id=""><a href="#" class="headerlink" title="　"></a>　</h2><p>本文首发于<a href="http://qianhk.com">钱凯凯的博客</a> : <a href="http://qianhk.com/2018/10/全连接神经网络训练手写图片识别/">http://qianhk.com/2018/10/全连接神经网络训练手写图片识别/</a></p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-10-03T10:46:28.000Z" itemprop="datePublished">
+              2018-10-03
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/AI/">AI</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/NN/">NN</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/MNIST/">MNIST</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  <div id="comment-container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '客户端码农学习ML-全连接神经网络识别手写图片Mnist',
+  owner: 'qianhk',
+  repo: 'qianhk.github.io',
+  oauth: {
+    client_id: '158d8d047a5c66420ecb',
+    client_secret: '5914732b33687719e97c518d1d0089a1a45ce3c0',
+  },
+})
+gitment.render('comment-container')
+</script>
+
+</div>
+
+            <footer>
+    <div>© 2016 - qianhk </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
